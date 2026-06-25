@@ -1,0 +1,443 @@
+
+<!DOCTYPE html>
+<html class="dark" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Wmuz — музыка для тебя</title>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#cfc4c4",
+                        "on-tertiary-container": "#730a1b",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "surface-bright": "#38393a",
+                        "primary-fixed": "#72fe8f",
+                        "outline": "#869585",
+                        "on-primary": "#003914",
+                        "surface-container": "#1e2020",
+                        "background": "#121414",
+                        "tertiary-container": "#ff767b",
+                        "error-container": "#93000a",
+                        "surface-tint": "#53e076",
+                        "on-surface-variant": "#bccbb9",
+                        "secondary-fixed": "#ebe0df",
+                        "on-surface": "#e3e2e2",
+                        "inverse-on-surface": "#2f3131",
+                        "surface-container-highest": "#343535",
+                        "primary": "#53e076",
+                        "on-tertiary-fixed-variant": "#881d28",
+                        "on-background": "#e3e2e2",
+                        "on-secondary-fixed-variant": "#4c4545",
+                        "on-secondary-fixed": "#201a1a",
+                        "surface-dim": "#121414",
+                        "on-secondary": "#352f2f",
+                        "inverse-surface": "#e3e2e2",
+                        "secondary-fixed-dim": "#cfc4c4",
+                        "surface-container-lowest": "#0d0e0f",
+                        "primary-container": "#1db954",
+                        "inverse-primary": "#006e2d",
+                        "on-primary-fixed-variant": "#005320",
+                        "on-primary-fixed": "#002108",
+                        "secondary-container": "#4c4545",
+                        "surface-variant": "#343535",
+                        "surface-container-high": "#292a2a",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#3d4a3d",
+                        "on-tertiary-fixed": "#400009",
+                        "on-tertiary": "#680114",
+                        "tertiary-fixed": "#ffdad9",
+                        "primary-fixed-dim": "#53e076",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ffb3b3",
+                        "surface-container-low": "#1a1c1c",
+                        "surface": "#121414",
+                        "on-primary-container": "#004118",
+                        "on-secondary-container": "#bdb3b2",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "player-height": "90px",
+                        "sidebar-width": "280px",
+                        "container-padding": "24px",
+                        "gutter-grid": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "display-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-lg": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "38px", "fontWeight": "800"}],
+                        "display-md": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .cursor-highlight {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(83, 224, 118, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+        .spa-view { display: none; }
+        .spa-view.active { display: block; }
+        .fill-icon { font-variation-settings: 'FILL' 1; }
+
+        /* Auth Styles */
+        .auth-container {
+            position: fixed;
+            inset: 0;
+            background: #121414;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden selection:bg-primary-container selection:text-on-primary-container flex flex-col md:flex-row h-screen">
+<div class="cursor-highlight" id="cursor-highlight"></div>
+
+<!-- Auth Page Overlay -->
+<div class="auth-container" id="auth-page">
+    <div class="w-full max-w-md p-8 bg-surface-container rounded-3xl shadow-2xl">
+        <div class="text-center mb-8">
+             <h1 class="font-display-md text-display-md font-black text-primary tracking-tighter">Wmuz</h1>
+             <p class="text-on-surface-variant">Войдите, чтобы слушать музыку</p>
+        </div>
+
+        <div class="flex mb-6 bg-surface-container-low p-1 rounded-xl">
+            <button onclick="switchAuthTab('login')" id="login-tab-btn" class="flex-1 py-2 rounded-lg font-label-lg transition-all bg-primary text-on-primary">Вход</button>
+            <button onclick="switchAuthTab('register')" id="register-tab-btn" class="flex-1 py-2 rounded-lg font-label-lg transition-all text-on-surface-variant">Регистрация</button>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="block text-label-sm mb-1 text-on-surface-variant">Email</label>
+                <input type="email" id="login-email" required class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary">
+            </div>
+            <div>
+                <label class="block text-label-sm mb-1 text-on-surface-variant">Пароль</label>
+                <input type="password" id="login-password" required class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary">
+            </div>
+            <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all">Войти</button>
+        </form>
+
+        <form id="register-form" class="space-y-4 hidden">
+             <div>
+                <label class="block text-label-sm mb-1 text-on-surface-variant">Имя</label>
+                <input type="text" id="register-name" required class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary">
+            </div>
+            <div>
+                <label class="block text-label-sm mb-1 text-on-surface-variant">Email</label>
+                <input type="email" id="register-email" required class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary">
+            </div>
+            <div>
+                <label class="block text-label-sm mb-1 text-on-surface-variant">Пароль</label>
+                <input type="password" id="register-password" required class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary">
+            </div>
+            <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all">Зарегистрироваться</button>
+        </form>
+    </div>
+</div>
+
+<!-- Web SideNavBar -->
+<aside class="hidden md:flex bg-surface-container-low dark:bg-surface-container-low w-sidebar-width h-full fixed left-0 top-0 flex-col p-gutter-grid z-40 shadow-[1px_0_0_0_rgba(255,255,255,0.05)]">
+<div class="flex items-center gap-4 mb-8 cursor-pointer" onclick="showPage('home-view')">
+<span class="material-symbols-outlined text-display-md text-primary fill-icon">album</span>
+<div>
+<h1 class="font-display-md text-display-md font-black text-primary tracking-tighter">Wmuz</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Премиум Музыка</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2 font-label-lg text-label-lg nav-links" id="sidebar-nav">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" data-target="home-view" href="#" onclick="showPage('home-view'); return false;">
+<span class="material-symbols-outlined">home</span> Главная
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" data-target="search-view" href="#" onclick="showPage('search-view'); return false;">
+<span class="material-symbols-outlined">search</span> Поиск
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" data-target="library-view" href="#" onclick="showPage('library-view'); return false;">
+<span class="material-symbols-outlined">library_music</span> Твоя Медиатека
+            </a>
+<div class="mt-4 mb-2 border-t border-outline-variant/30 pt-4"></div>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" href="#" onclick="openCreatePlaylistModal(); return false;">
+<span class="material-symbols-outlined">add_box</span> Создать Плейлист
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" data-target="liked-songs-view" href="#" onclick="showPage('liked-songs-view'); return false;">
+<span class="material-symbols-outlined text-primary">favorite</span> Любимые Треки
+            </a>
+<div id="user-playlists-nav"></div>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<div class="flex-1 md:ml-sidebar-width w-full relative h-full flex flex-col">
+<!-- TopAppBar -->
+<header class="hidden md:flex bg-surface/90 dark:bg-surface/90 backdrop-blur top-0 sticky justify-between items-center h-16 px-gutter-grid z-30 transition-opacity">
+<div class="flex-1 flex items-center gap-4">
+<div class="relative group w-full max-w-md hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-on-surface">search</span>
+<input class="w-full bg-surface-container-high border-none rounded-full py-2 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface-container-highest transition-all font-body-md text-body-md placeholder:text-on-surface-variant" id="global-search" placeholder="Поиск исполнителей, треков или подкастов" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 text-on-surface-variant">
+<button aria-label="уведомления" class="hover:text-on-surface transition-opacity"><span class="material-symbols-outlined">notifications</span></button>
+<button aria-label="настройки" class="hover:text-on-surface transition-opacity"><span class="material-symbols-outlined">settings</span></button>
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary cursor-pointer" onclick="showPage('profile-view')">
+<img id="user-avatar-img" alt="Аватар пользователя" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/a/default-user=s96-c"/>
+</div>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto pb-[calc(theme(spacing.player-height)+80px)] md:pb-player-height" id="main-scroll-area">
+<!-- Home View -->
+<main class="spa-view w-full h-full" id="home-view">
+<section class="px-container-padding py-8 pt-12 md:pt-8 max-w-6xl mx-auto">
+<h1 class="font-display-lg text-display-lg font-black text-on-surface mb-8">Добрый вечер</h1>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4">Популярные Треки</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" id="home-tracks-container">
+<!-- Rendered by JS -->
+</div>
+</section>
+</main>
+<!-- Search View -->
+<main class="spa-view w-full h-full" id="search-view">
+<section class="px-container-padding py-8 pt-12 md:pt-8 max-w-6xl mx-auto">
+<h1 class="font-display-md text-display-md font-black text-on-surface mb-6">Результаты Поиска</h1>
+<div class="flex flex-col gap-2" id="search-results-container">
+<p class="text-on-surface-variant">Введите запрос в строку поиска для поиска треков...</p>
+</div>
+</section>
+</main>
+<!-- Library View -->
+<main class="spa-view w-full h-full" id="library-view">
+<section class="px-container-padding py-8 pt-12 md:pt-8 max-w-6xl mx-auto">
+<h1 class="font-display-lg text-display-lg font-black text-on-surface mb-8">Твоя Медиатека</h1>
+<div class="flex flex-col gap-2" id="library-playlists-container">
+<p class="text-on-surface-variant">Здесь появятся ваши сохраненные плейлисты и альбомы.</p>
+</div>
+</section>
+</main>
+<!-- Liked Songs View -->
+<main class="spa-view w-full h-full" id="liked-songs-view">
+<!-- Playlist Header Hero -->
+<section class="relative bg-gradient-to-b from-[#3a205a] to-background px-container-padding pt-8 md:pt-16 pb-8 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left shadow-[0_24px_48px_rgba(0,0,0,0.4)]">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background/90 z-0"></div>
+<div class="relative z-10 w-48 h-48 md:w-56 md:h-56 bg-gradient-to-br from-[#8a5ad9] to-[#ffffff] rounded-lg shadow-2xl flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined fill-icon text-[96px] text-on-primary">favorite</span>
+</div>
+<div class="relative z-10 flex flex-col gap-2 mt-4 md:mt-0">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Плейлист</span>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-black text-on-surface tracking-tight">Любимые Треки</h1>
+<div class="flex items-center justify-center md:justify-start gap-2 mt-2 font-body-md text-body-md text-on-surface-variant">
+<span id="user-name-display" class="font-label-lg text-label-lg text-on-surface">Wmuz Пользователь</span>
+<span>•</span>
+<span id="liked-songs-count">0 треков</span>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="px-container-padding py-6 flex items-center gap-6 relative z-10">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(83,224,118,0.3)] hover:scale-105 active:scale-95 transition-all" onclick="togglePlay()">
+<span class="material-symbols-outlined fill-icon text-[32px] ml-1" id="main-play-icon">play_arrow</span>
+</button>
+</section>
+<!-- Tracklist Table -->
+<section class="px-container-padding pb-8">
+<div class="grid grid-cols-[30px_1fr_40px] md:grid-cols-[40px_minmax(200px,1fr)_minmax(150px,1fr)_minmax(120px,auto)_40px_60px] gap-4 px-4 py-2 border-b border-surface-variant/50 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider sticky top-0 bg-background/95 backdrop-blur z-20">
+<div class="text-right pr-2">#</div>
+<div>Название</div>
+<div class="hidden md:block">Альбом</div>
+<div class="hidden md:block">Дата добавления</div>
+<div class="hidden md:block text-center"></div>
+<div class="text-right flex justify-end"><span class="material-symbols-outlined text-[18px]">schedule</span></div>
+</div>
+<div class="flex flex-col mt-2" id="liked-songs-container">
+<!-- Rendered by JS -->
+</div>
+</section>
+</main>
+<!-- Custom Playlist View -->
+<main class="spa-view w-full h-full" id="playlist-view">
+<!-- Playlist Header Hero -->
+<section class="relative bg-gradient-to-b from-[#5a3020] to-background px-container-padding pt-8 md:pt-16 pb-8 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left shadow-[0_24px_48px_rgba(0,0,0,0.4)]">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background/90 z-0"></div>
+<div class="relative z-10 w-48 h-48 md:w-56 md:h-56 bg-surface-variant rounded-lg shadow-2xl flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[96px] text-on-surface-variant">music_note</span>
+</div>
+<div class="relative z-10 flex flex-col gap-2 mt-4 md:mt-0">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Плейлист</span>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-black text-on-surface tracking-tight" id="playlist-view-title">Плейлист</h1>
+<div class="flex items-center justify-center md:justify-start gap-2 mt-2 font-body-md text-body-md text-on-surface-variant">
+<span class="font-label-lg text-label-lg text-on-surface">Wmuz Пользователь</span>
+<span>•</span>
+<span id="playlist-songs-count">0 треков</span>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="px-container-padding py-6 flex items-center gap-6 relative z-10">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(83,224,118,0.3)] hover:scale-105 active:scale-95 transition-all" onclick="playCurrentPlaylist()">
+<span class="material-symbols-outlined fill-icon text-[32px] ml-1">play_arrow</span>
+</button>
+</section>
+<!-- Tracklist Table -->
+<section class="px-container-padding pb-8">
+<div class="grid grid-cols-[30px_1fr_40px] md:grid-cols-[40px_minmax(200px,1fr)_minmax(150px,1fr)_minmax(120px,auto)_40px_60px] gap-4 px-4 py-2 border-b border-surface-variant/50 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider sticky top-0 bg-background/95 backdrop-blur z-20">
+<div class="text-right pr-2">#</div>
+<div>Название</div>
+<div class="hidden md:block">Альбом</div>
+<div class="hidden md:block">Дата добавления</div>
+<div class="hidden md:block text-center"></div>
+<div class="text-right flex justify-end"><span class="material-symbols-outlined text-[18px]">schedule</span></div>
+</div>
+<div class="flex flex-col mt-2" id="playlist-songs-container">
+<!-- Rendered by JS -->
+</div>
+</section>
+</main>
+<!-- Profile View -->
+<main class="spa-view w-full h-full" id="profile-view">
+<!-- Profile Header -->
+<section class="px-container-padding py-8 pt-12 md:pt-8 bg-gradient-to-b from-surface-container-high to-background">
+<div class="flex flex-col md:flex-row items-center md:items-end gap-6 max-w-6xl mx-auto">
+<div class="w-40 h-40 md:w-56 md:h-56 rounded-full shadow-[0px_8px_24px_rgba(0,0,0,0.5)] overflow-hidden border-4 border-surface-container shrink-0 relative group">
+<img id="profile-avatar-img-lg" alt="Фото Профиля" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/a/default-user=s256-c"/>
+</div>
+<div class="text-center md:text-left flex-1">
+<span class="text-label-sm font-label-sm uppercase tracking-widest text-primary mb-2 block">Профиль</span>
+<h1 id="profile-name-display" class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-on-surface mb-4">Пользователь</h1>
+<button onclick="logout()" class="px-6 py-2 bg-surface-variant text-on-surface rounded-full font-label-lg hover:bg-error/20 hover:text-error transition-all">Выйти</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<!-- Create Playlist Modal -->
+<div class="modal-overlay hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] items-center justify-center p-4" id="create-playlist-modal">
+<div class="bg-surface-container w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col border border-outline-variant/50">
+<div class="p-6 border-b border-surface-variant flex justify-between items-center">
+<h2 class="text-headline-md font-headline-md text-on-surface">Создать Плейлист</h2>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="closeCreatePlaylistModal()"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-2">Название Плейлиста</label>
+<input class="w-full bg-surface-container-high border border-outline-variant rounded-md py-2 px-3 text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md" id="new-playlist-name" placeholder="Мой Новый Плейлист" type="text"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-2">Поиск треков для добавления</label>
+<input class="w-full bg-surface-container-high border border-outline-variant rounded-md py-2 px-3 text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md" id="playlist-track-search" placeholder="Поиск..." type="text"/>
+</div>
+<div class="h-48 overflow-y-auto bg-surface-container-highest rounded-md p-2 border border-outline-variant/30" id="playlist-track-results">
+<!-- Search results will appear here -->
+</div>
+<div class="text-label-sm text-on-surface-variant mt-2">
+<span>Выбрано: </span><span class="text-primary font-bold" id="selected-tracks-count">0</span><span> треков</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-high border-t border-surface-variant flex justify-end gap-3">
+<button class="px-4 py-2 rounded-full font-label-lg text-on-surface hover:bg-surface-variant transition-colors" onclick="closeCreatePlaylistModal()">Отмена</button>
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-lg hover:bg-primary-fixed transition-colors shadow-md" onclick="savePlaylist()">Создать</button>
+</div>
+</div>
+</div>
+
+<!-- BottomNavBar (Mobile Nav) -->
+<nav class="md:hidden fixed bottom-[90px] left-0 w-full z-40 bg-surface-container border-t border-outline-variant shadow-[0_-4px_24px_rgba(0,0,0,0.5)] flex justify-around items-center h-16 pb-safe nav-links-mobile">
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-container-high transition-colors" data-target="home-view" href="#" onclick="showPage('home-view'); return false;">
+<span class="material-symbols-outlined mb-1 text-[24px]">home</span>
+<span class="font-label-sm text-label-sm">Главная</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-container-high transition-colors" data-target="search-view" href="#" onclick="showPage('search-view'); return false;">
+<span class="material-symbols-outlined mb-1 text-[24px]">search</span>
+<span class="font-label-sm text-label-sm">Поиск</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-container-high transition-colors" data-target="library-view" href="#" onclick="showPage('library-view'); return false;">
+<span class="material-symbols-outlined mb-1 text-[24px]">library_music</span>
+<span class="font-label-sm text-label-sm">Медиатека</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-container-high transition-colors" data-target="profile-view" href="#" onclick="showPage('profile-view'); return false;">
+<span class="material-symbols-outlined mb-1 text-[24px]">person</span>
+<span class="font-label-sm text-label-sm">Профиль</span>
+</a>
+</nav>
+
+<!-- Player Bar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 h-player-height bg-surface-container border-t border-outline-variant shadow-[0_-8px_32px_rgba(0,0,0,0.6)] flex items-center justify-between px-4 md:px-gutter-grid">
+<div class="flex items-center gap-4 w-[30%] min-w-[180px]">
+<div class="w-14 h-14 rounded-md shadow-sm hidden sm:block bg-surface-variant shrink-0 overflow-hidden relative" id="player-cover-container">
+<img alt="Обложка" class="w-full h-full object-cover hidden absolute inset-0 transition-opacity" id="player-cover" src=""/>
+<span class="material-symbols-outlined text-on-surface-variant w-full h-full flex items-center justify-center absolute inset-0" id="player-cover-placeholder">music_note</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<a class="font-label-lg text-label-lg text-on-surface hover:underline truncate" href="#" id="player-title">Выберите трек</a>
+<a class="font-body-sm text-label-sm text-on-surface-variant hover:underline hover:text-on-surface truncate" href="#" id="player-artist">...</a>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center max-w-[40%] w-full gap-1">
+<div class="flex items-center gap-4 md:gap-6">
+<button class="text-on-surface-variant hover:text-on-surface" onclick="playPrevious()"><span class="material-symbols-outlined fill-icon text-[28px]">skip_previous</span></button>
+<button class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-on-surface text-background flex items-center justify-center hover:scale-105 transition-transform" id="play-pause-btn" onclick="togglePlay()">
+<span class="material-symbols-outlined fill-icon text-[24px]" id="play-icon">play_arrow</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="playNext()"><span class="material-symbols-outlined fill-icon text-[28px]">skip_next</span></button>
+</div>
+<div class="w-full flex items-center gap-2 group hidden sm:flex">
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]" id="player-current-time">0:00</span>
+<div class="h-1 bg-surface-variant rounded-full flex-1 relative cursor-pointer group-hover:h-1.5 transition-all" id="player-progress-container">
+<div class="absolute top-0 left-0 h-full bg-on-surface group-hover:bg-primary rounded-full w-[0%]" id="player-progress"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]" id="player-duration">-:--</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-4 w-[30%] min-w-[120px] text-on-surface-variant">
+<div class="flex items-center gap-2 w-24 hidden md:flex group cursor-pointer" id="volume-control">
+<span class="material-symbols-outlined text-[20px]" id="volume-icon">volume_up</span>
+<div class="h-1 bg-surface-variant rounded-full flex-1 relative group-hover:h-1.5 transition-all" id="volume-slider-container">
+<div class="absolute top-0 left-0 h-full bg-on-surface rounded-full w-[70%] group-hover:bg-primary transition-colors" id="volume-slider-fill"></div>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
