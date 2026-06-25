@@ -1,0 +1,11 @@
+{
+  "users": [],
+  "tracks": [
+    { "id": 1, "title": "Ночной Рейс", "artist": "Warzen910", "album": "Облачный город", "duration": "4:12", "cover": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800", "date": "Сегодня", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { "id": 2, "title": "Свет облаков", "artist": "Warzen910", "album": "Вне зоны", "duration": "3:46", "cover": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800", "date": "Вчера", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { "id": 3, "title": "Пульс в такт", "artist": "Warzen910", "album": "Вечерний драйв", "duration": "3:58", "cover": "https://images.unsplash.com/photo-1511376777868-611b54f68947?w=800", "date": "2 дня назад", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+    { "id": 4, "title": "Тени города", "artist": "Warzen910", "album": "Neon Night", "duration": "4:22", "cover": "https://images.unsplash.com/photo-1499195333224-3ce974eecb47?w=800", "date": "Недавно", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+    { "id": 5, "title": "Глубокий поток", "artist": "Warzen910", "album": "Пульс", "duration": "4:08", "cover": "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?w=800", "date": "Недавно", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+    { "id": 6, "title": "Неоновые крыши", "artist": "Warzen910", "album": "Ночное небо", "duration": "4:00", "cover": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800", "date": "Сегодня", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+  ]
+}
